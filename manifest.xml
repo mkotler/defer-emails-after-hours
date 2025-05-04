@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="MailApp">
+  <Id>cdbb32a0-0379-4689-ac56-8524ea9206c8</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Matthew Kotler</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="Defer Emails After Hours"/>
+  <Description DefaultValue="Automatically delay email sent after business hours."/>
+  <IconUrl DefaultValue="https://localhost:3000/assets/delay-send-64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/delay-send-128.png"/>
+  <SupportUrl DefaultValue="https://github.com/mkotler/defer-emails-after-hours"/>
+  <Hosts>
+    <Host Name="Mailbox"/>
+  </Hosts>
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/>
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+  <Permissions>ReadWriteItem</Permissions>
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+  </Rule>
+  <DisableEntityHighlighting>false</DisableEntityHighlighting>
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
+      <Requirements>
+        <bt:Sets DefaultMinVersion="1.15">
+          <bt:Set Name="Mailbox" />
+        </bt:Sets>
+      </Requirements>
+      <Hosts>
+        <Host xsi:type="MailHost">
+          <!-- Event-based activation happens in a lightweight runtime.-->          
+          <Runtimes>
+            <!-- HTML file including reference to or inline JavaScript event handlers.
+                This is used by Outlook on the web and on the new Mac UI, and new Outlook on Windows. -->
+            <Runtime resid="WebViewRuntime.Url">
+              <!-- JavaScript file containing event handlers. This is used by classic Outlook on Windows. -->
+              <Override type="javascript" resid="JSRuntime.Url"/>
+            </Runtime>
+          </Runtimes>          
+          <DesktopFormFactor>
+            <!-- Define the buttons for the message compose ribbon -->
+            <FunctionFile resid="WebViewRuntime.Url"/> 
+            <ExtensionPoint xsi:type="MessageComposeCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="msgComposeGroup">                  
+                  <Label resid="GroupLabel"/>  
+                  <!-- Remove delay button -->
+                  <Control xsi:type="Button" id="removeDelayButton">
+                    <Label resid="RemoveButton.Label"/>
+                    <Supertip>
+                      <Title resid="RemoveButton.Label"/>
+                      <Description resid="RemoveButton.Tooltip"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="DelaySend.16x16"/>
+                      <bt:Image size="32" resid="DelaySend.32x32"/>
+                      <bt:Image size="80" resid="DelaySend.80x80"/>
+                    </Icon>
+                    <Action xsi:type="ExecuteFunction">
+                      <FunctionName>removeDelay</FunctionName>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>            
+            <ExtensionPoint xsi:type="MessageReadCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="msgReadGroup">
+                  <Label resid="GroupLabel"/>
+                  
+                  <!-- Settings button for read mode -->
+                  <Control xsi:type="Button" id="openTaskpaneButton">
+                    <Label resid="TaskpaneButton.Label"/>
+                    <Supertip>
+                      <Title resid="TaskpaneButton.Label"/>
+                      <Description resid="TaskpaneButton.Tooltip"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="DelaySend.16x16"/>
+                      <bt:Image size="32" resid="DelaySend.32x32"/>
+                      <bt:Image size="80" resid="DelaySend.80x80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="Taskpane.Url"/>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>            
+            <!-- Event handler for new message compose -->
+            <ExtensionPoint xsi:type="LaunchEvent">
+              <LaunchEvents>
+                <LaunchEvent Type="OnNewMessageCompose" FunctionName="checkAfterHours" />
+              </LaunchEvents>
+              <!-- Identify the runtime to be used (also referenced by the Runtime element). -->
+              <SourceLocation resid="WebViewRuntime.Url"/>
+            </ExtensionPoint>
+          </DesktopFormFactor>
+        </Host>
+      </Hosts>
+      <Resources>
+        <bt:Images>
+          <bt:Image id="DelaySend.16x16" DefaultValue="https://localhost:3000/assets/delay-send-16.png"/>
+          <bt:Image id="DelaySend.32x32" DefaultValue="https://localhost:3000/assets/delay-send-32.png"/>
+          <bt:Image id="DelaySend.80x80" DefaultValue="https://localhost:3000/assets/delay-send-80.png"/>
+        </bt:Images>        
+        <bt:Urls>
+          <bt:Url id="WebViewRuntime.Url" DefaultValue="https://localhost:3000/launchevent.html" />
+          <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html" />
+          <!-- Entry needed for classic Outlook on Windows. -->
+          <bt:Url id="JSRuntime.Url" DefaultValue="https://localhost:3000/launchevent.js" />
+        </bt:Urls>          
+        <bt:ShortStrings>
+          <bt:String id="GroupLabel" DefaultValue="Defer Emails"/>
+          <bt:String id="RemoveButton.Label" DefaultValue="Remove Delay"/>
+          <bt:String id="TaskpaneButton.Label" DefaultValue="Settings"/>
+        </bt:ShortStrings>
+        <bt:LongStrings>
+          <bt:String id="RemoveButton.Tooltip" DefaultValue="Remove the delay on the current email message"/>
+          <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Open the settings for Defer Emails After Hours"/>
+        </bt:LongStrings>
+      </Resources>
+    </VersionOverrides>
+  </VersionOverrides>
+</OfficeApp>

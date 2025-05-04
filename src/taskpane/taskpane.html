@@ -1,0 +1,83 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. -->
+<!-- This file shows how to design a first-run page that provides a welcome screen to the user about the features of the add-in. -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Defer Emails After Hours Add-in</title>
+
+    <!-- Office JavaScript API -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
+    <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui#/. -->
+    <link rel="stylesheet" href="https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/office-ui-fabric-core/11.1.0/css/fabric.min.css"/>
+
+    <!-- Template styles -->
+    <link href="taskpane.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="ms-font-m ms-welcome ms-Fabric">    <header class="ms-welcome__header ms-bgColor-neutralLighter">
+        <img width="48" height="48" src="../../assets/delay-send-64.png" alt="Defer Emails" title="Defer Emails After Hours" />
+        <h1 class="ms-font-xl">Settings</h1>
+    </header>
+    <section id="sideload-msg" class="ms-welcome__main">
+        <h2 class="ms-font-xl">Please <a target="_blank" href="https://learn.microsoft.com/office/dev/add-ins/testing/test-debug-office-add-ins#sideload-an-office-add-in-for-testing">sideload</a> your add-in to see app body.</h2>
+    </section>    <main id="app-body" class="ms-welcome__main" style="display: none;">
+        <h2 class="ms-font-xl">Defer Emails After Hours Settings</h2>
+        
+        <div class="ms-font-m ms-fontWeight-semibold" style="margin-top: 20px;">Delay Send Status</div>
+        <div class="ms-ChoiceField">
+            <input id="enable-delay" class="ms-ChoiceField-input" type="radio" name="delay-status" value="enabled">
+            <label for="enable-delay" class="ms-ChoiceField-field">
+                <span class="ms-Label">Enabled</span>
+            </label>
+        </div>        <div class="ms-ChoiceField">
+            <input id="disable-delay" class="ms-ChoiceField-input" type="radio" name="delay-status" value="disabled">
+            <label for="disable-delay" class="ms-ChoiceField-field">
+                <span class="ms-Label">Disabled</span>
+            </label>
+        </div>
+        
+        <div class="ms-font-m ms-fontWeight-semibold" style="margin-top: 20px;">Business Hours Settings</div>
+        <div style="margin-top: 10px;">
+            <label for="start-hour" class="ms-font-m">Start Time:</label>
+            <select id="start-hour" class="ms-Dropdown" style="margin-left: 10px; width: 75px;">
+                <option value="5">5 AM</option>
+                <option value="6">6 AM</option>
+                <option value="7">7 AM</option>
+                <option value="8">8 AM</option>
+                <option value="9">9 AM</option>
+            </select>
+        </div>
+        
+        <div style="margin-top: 10px;">
+            <label for="end-hour" class="ms-font-m">End Time:</label>
+            <select id="end-hour" class="ms-Dropdown" style="margin-left: 10px; width: 75px;">
+                <option value="16">4 PM</option>
+                <option value="17">5 PM</option>
+                <option value="18">6 PM</option>
+                <option value="19">7 PM</option>
+                <option value="20">8 PM</option>
+                <option value="21">9 PM</option>
+                <option value="22">10 PM</option>                
+            </select>
+        </div>
+          <div style="margin-top: 10px;">
+            <div role="button" id="save-hours" class="ms-Button ms-Button--hero">
+                <span class="ms-Button-label">Save Business Hours</span>
+            </div>
+        </div>
+        
+        <div class="ms-font-m ms-fontWeight-semibold" style="margin-top: 20px;">About</div>
+        <p class="ms-font-m">
+            Emails composed outside business hours (weekends, holidays, or before/after hours)<br>
+            will be automatically delayed until the next business day.
+        </p>
+    </main>
+</body>
+
+</html>
